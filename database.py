@@ -71,6 +71,9 @@ class Database:
             "categories": cats,
             "products": active_products
         }
+        
+        os.makedirs(os.path.dirname(self.webapp_products_file), exist_ok=True)
+        
         with open(self.webapp_products_file, 'w', encoding='utf-8') as f:
             json.dump(data_obj, f, ensure_ascii=False, indent=4)
 
