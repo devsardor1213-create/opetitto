@@ -16,4 +16,9 @@ DB_PASS = ""
 DB_NAME = "fastfood"
 
 # Telegram Web App uchun URL
-WEBAPP_URL = "https://eighty-poems-talk.loca.lt"
+# Agar Railway'da bo'lsa, avtomatik ravishda Railway domenini oladi
+domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if domain:
+    WEBAPP_URL = f"https://{domain}"
+else:
+    WEBAPP_URL = os.environ.get("WEBAPP_URL", "https://eighty-poems-talk.loca.lt")

@@ -868,10 +868,33 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(f"✅ {count} ta foydalanuvchiga yuborildi!", reply_markup=get_admin_keyboard())
 
+async def start_webapp():
+    from aiohttp import web
+    import os
+    
+    async def index_handler(request):
+        return web.FileResponse('webapp/index.html')
+        
+    app = web.Application()
+    # Asosiy sahifa (index.html)
+    app.router.add_get('/', index_handler)
+    # Qolgan statik fayllarni xizmat qilish (css, js, rasm)
+    app.router.add_static('/', 'webapp')
+    
+    runner = web.AppRunner(app)
+    await runner.setup()
+    # Railway'da PORT o'zgaruvchisi avtomatik beriladi
+    port = int(os.environ.get('PORT', 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"🌐 WebApp server {port}-portda ishga tushdi")
+
 async def main():
     await db.connect()
     try:
         print("Bot ishga tushdi...")
+        # WebApp serverni orqa fonda ishga tushirish
+        asyncio.create_task(start_webapp())
         await dp.start_polling(bot)
     finally:
         await db.close()
