@@ -62,7 +62,6 @@ class Database:
                 "admin_accounts": getattr(self, 'admin_accounts', [{"login": "admin", "password": "123", "name": "Asosiy Admin"}]),
                 "admin_sessions": getattr(self, 'admin_sessions', {})
             }, f, ensure_ascii=False, indent=4)
-        self.export_webapp_products()
 
     def export_webapp_products(self):
         active_products = [p for p in self.products if p.get('is_active', 1)]
@@ -149,6 +148,7 @@ class Database:
         if cat in self.categories:
             self.categories.remove(cat)
             self.save_data()
+            self.export_webapp_products()
 
     async def get_admin_accounts(self):
         return getattr(self, 'admin_accounts', [])
@@ -191,6 +191,7 @@ class Database:
             "image": image if image else "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80"
         })
         self.save_data()
+        self.export_webapp_products()
         
     async def toggle_product(self, product_id):
         for p in self.products:
@@ -198,6 +199,7 @@ class Database:
                 p["is_active"] = 0 if p.get("is_active", 1) == 1 else 1
                 break
         self.save_data()
+        self.export_webapp_products()
 
     async def edit_product(self, product_id, new_price, new_image):
         for p in self.products:
@@ -205,12 +207,13 @@ class Database:
                 p["price"] = new_price
                 if new_image:
                     p["image"] = new_image
-                break
         self.save_data()
+        self.export_webapp_products()
         
     async def delete_product(self, product_id):
         self.products = [p for p in self.products if p["id"] != product_id]
         self.save_data()
+        self.export_webapp_products()
 
     async def get_couriers(self):
         return getattr(self, 'couriers', [])

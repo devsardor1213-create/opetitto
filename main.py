@@ -21,9 +21,9 @@ dp = Dispatcher()
 db = Database()
 
 LANGS = {
-    "uz": {"start": "Assalomu alaykum", "menu": "🍔 Menyu", "back": "🔙 Asosiy menyu", "kafe": "🏢 Kafe + Bino", "masofaviy": "🛵 Masofaviy", "kuryer": "📦 Kuryer bo'lish", "kabinet": "👤 Kabinetim", "aloqa": "☎️ Admin bilan aloqa", "xona": "🚪 Xona", "stollar": "🍽 Kafe", "cancel": "❌ Bekor qilish", "send_loc": "📍 Lokatsiyani yuborish", "skip": "⏩ O'tkazib yuborish", "send_phone": "📱 Raqamni yuborish", "main_menu": "Bosh menyuga qaytdingiz.", "choose_loc": "Joylashuvni tanlang:", "room_num": "Xona raqamini kiriting:", "table_num": "Stol raqamini kiriting:", "remote_order": "Masofaviy buyurtma!\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", "my_orders": "📦 Buyurtmalarim", "start_msg": "🔥 <b>Food Markaziga xush kelibsiz!</b>\n\n📖 <b>Qisqacha qo'llanma:</b>\n1️⃣ Avval yetkazib berish turini tanlang:\n   🏢 <b>Kafe + Bino:</b> Kafeda o'tirganingizda yoki bino xonalariga yetkazish uchun.\n   🛵 <b>Masofaviy:</b> Uyingizga yoki boshqa manzilga eltib berish uchun.\n2️⃣ So'ngra <b>🍔 Menyu</b> tugmasi paydo bo'ladi, o'sha yerdan mahsulot tanlab xaridni yakunlaysiz.\n\n👇 Iltimos, o'zingizga kerakli bo'limni tanlang:"},
-    "ru": {"start": "Здравствуйте", "menu": "🍔 Меню", "back": "🔙 Главное меню", "kafe": "🏢 Кафе + Здание", "masofaviy": "🛵 Удаленно", "kuryer": "📦 Стать курьером", "kabinet": "👤 Мой кабинет", "aloqa": "☎️ Связь с админом", "xona": "🚪 Комната", "stollar": "🍽 Кафе", "cancel": "❌ Отмена", "send_loc": "📍 Отправить локацию", "skip": "⏩ Пропустить", "send_phone": "📱 Отправить номер", "main_menu": "Вы вернулись в главное меню.", "choose_loc": "Выберите место:", "room_num": "Введите номер комнаты:", "table_num": "Введите номер стола:", "remote_order": "Удаленный заказ!\nВыберите продукты через кнопку <b>🍔 Меню</b>:", "my_orders": "📦 Мои заказы", "start_msg": "🔥 <b>Добро пожаловать в Food Центр!</b>\n\n📖 <b>Краткое руководство:</b>\n1️⃣ Сначала выберите тип доставки:\n   🏢 <b>Кафе + Здание:</b> Для доставки в комнату или если сидите в кафе.\n   🛵 <b>Удаленно:</b> Для доставки домой или по другому адресу.\n2️⃣ Затем появится кнопка <b>🍔 Меню</b>, выберите продукты и завершите заказ.\n\n👇 Пожалуйста, выберите нужный раздел:"},
-    "en": {"start": "Hello", "menu": "🍔 Menu", "back": "🔙 Main menu", "kafe": "🏢 Cafe + Building", "masofaviy": "🛵 Delivery", "kuryer": "📦 Become courier", "kabinet": "👤 My Profile", "aloqa": "☎️ Contact Admin", "xona": "🚪 Room", "stollar": "🍽 Cafe", "cancel": "❌ Cancel", "send_loc": "📍 Send Location", "skip": "⏩ Skip", "send_phone": "📱 Send Number", "main_menu": "Returned to main menu.", "choose_loc": "Choose location:", "room_num": "Enter room number:", "table_num": "Enter table number:", "remote_order": "Remote delivery!\nChoose items via the <b>🍔 Menu</b> button:", "my_orders": "📦 My Orders", "start_msg": "🔥 <b>Welcome to Food Center!</b>\n\n📖 <b>Quick guide:</b>\n1️⃣ First select the delivery type:\n   🏢 <b>Cafe + Building:</b> For delivery to your room or table.\n   🛵 <b>Delivery:</b> For home delivery.\n2️⃣ Then the <b>🍔 Menu</b> button will appear, choose items and checkout.\n\n👇 Please select a section:"}
+    "uz": {"start": "Assalomu alaykum", "menu": "🍔 Menyu", "back": "🔙 Asosiy menyu", "kafe": "🏢 Kafe + Bino", "masofaviy": "🛵 Masofaviy", "kuryer": "📦 Kuryer bo'lish", "kabinet": "👤 Kabinetim", "aloqa": "☎️ Admin bilan aloqa", "xona": "🚪 Xona", "stollar": "🍽 Kafe", "cancel": "❌ Bekor qilish", "send_loc": "📍 Lokatsiyani yuborish", "skip": "⏩ O'tkazib yuborish", "send_phone": "📱 Raqamni yuborish", "main_menu": "Bosh menyuga qaytdingiz.", "choose_loc": "Joylashuvni tanlang:", "room_num": "Xona raqamini kiriting:", "table_num": "Stol raqamini kiriting:", "remote_order": "Masofaviy buyurtma!\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", "my_orders": "📦 Buyurtmalarim", "start_msg": "🔥 <b>Food Markaziga xush kelibsiz!</b>\n\n📖 <b>Qisqacha qo'llanma:</b>\n1️⃣ Avval yetkazib berish turini tanlang:\n   🏢 <b>Kafe + Bino:</b> Kafeda o'tirganingizda yoki bino xonalariga yetkazish uchun.\n   🛵 <b>Masofaviy:</b> Uyingizga yoki boshqa manzilga eltib berish uchun.\n2️⃣ So'ngra <b>🍔 Menyu</b> tugmasi paydo bo'ladi, o'sha yerdan mahsulot tanlab xaridni yakunlaysiz.\n\n👇 Iltimos, o'zingizga kerakli bo'limni tanlang:", "comment_prompt": "Qo'shimcha izoh qoldiring (Masalan: Tezroq, Pishloq ko'proq):\nYoki shunchaki 'Yoq' deb yozing.", "no": "Yo'q", "address_prompt": "Endi yetkazib berish uchun manzilingizni yozing (yoki lokatsiya yuboring):", "comment_prompt_short": "Qo'shimcha izoh qoldiring (Yoki 'Yoq' deb yozing):", "cabinet_title": "👤 <b>Foydalanuvchi kabineti</b>", "name": "Ism", "total_orders": "Jami xaridlar soni", "total_spent": "Sarflangan summa", "no_orders": "Sizda hali buyurtmalar yo'q.", "last_orders": "📦 <b>Sizning oxirgi 5 ta buyurtmangiz:</b>", "order_num": "Buyurtma", "date": "Sana", "products": "Mahsulotlar", "total": "Jami", "status": "Holati", "order_accepted": "Buyurtmangiz qabul qilindi!", "your_purchase": "Xaridingiz", "admin_wait": "Adminlar tez orada ko'rib chiqishadi."},
+    "ru": {"start": "Здравствуйте", "menu": "🍔 Меню", "back": "🔙 Главное меню", "kafe": "🏢 Кафе + Здание", "masofaviy": "🛵 Удаленно", "kuryer": "📦 Стать курьером", "kabinet": "👤 Мой кабинет", "aloqa": "☎️ Связь с админом", "xona": "🚪 Комната", "stollar": "🍽 Кафе", "cancel": "❌ Отмена", "send_loc": "📍 Отправить локацию", "skip": "⏩ Пропустить", "send_phone": "📱 Отправить номер", "main_menu": "Вы вернулись в главное меню.", "choose_loc": "Выберите место:", "room_num": "Введите номер комнаты:", "table_num": "Введите номер стола:", "remote_order": "Удаленный заказ!\nВыберите продукты через кнопку <b>🍔 Меню</b>:", "my_orders": "📦 Мои заказы", "start_msg": "🔥 <b>Добро пожаловать в Food Центр!</b>\n\n📖 <b>Краткое руководство:</b>\n1️⃣ Сначала выберите тип доставки:\n   🏢 <b>Кафе + Здание:</b> Для доставки в комнату или если сидите в кафе.\n   🛵 <b>Удаленно:</b> Для доставки домой или по другому адресу.\n2️⃣ Затем появится кнопка <b>🍔 Меню</b>, выберите продукты и завершите заказ.\n\n👇 Пожалуйста, выберите нужный раздел:", "comment_prompt": "Оставьте комментарий (Например: Быстрее, Больше сыра):\nИли просто напишите 'Нет'.", "no": "Нет", "address_prompt": "Теперь напишите свой адрес для доставки (или отправьте локацию):", "comment_prompt_short": "Оставьте комментарий (Или напишите 'Нет'):", "cabinet_title": "👤 <b>Личный кабинет</b>", "name": "Имя", "total_orders": "Общее количество покупок", "total_spent": "Потраченная сумма", "no_orders": "У вас пока нет заказов.", "last_orders": "📦 <b>Ваши последние 5 заказов:</b>", "order_num": "Заказ", "date": "Дата", "products": "Продукты", "total": "Итого", "status": "Статус", "order_accepted": "Ваш заказ принят!", "your_purchase": "Ваша покупка", "admin_wait": "Админы скоро рассмотрят."},
+    "en": {"start": "Hello", "menu": "🍔 Menu", "back": "🔙 Main menu", "kafe": "🏢 Cafe + Building", "masofaviy": "🛵 Delivery", "kuryer": "📦 Become courier", "kabinet": "👤 My Profile", "aloqa": "☎️ Contact Admin", "xona": "🚪 Room", "stollar": "🍽 Cafe", "cancel": "❌ Cancel", "send_loc": "📍 Send Location", "skip": "⏩ Skip", "send_phone": "📱 Send Number", "main_menu": "Returned to main menu.", "choose_loc": "Choose location:", "room_num": "Enter room number:", "table_num": "Enter table number:", "remote_order": "Remote delivery!\nChoose items via the <b>🍔 Menu</b> button:", "my_orders": "📦 My Orders", "start_msg": "🔥 <b>Welcome to Food Center!</b>\n\n📖 <b>Quick guide:</b>\n1️⃣ First select the delivery type:\n   🏢 <b>Cafe + Building:</b> For delivery to your room or table.\n   🛵 <b>Delivery:</b> For home delivery.\n2️⃣ Then the <b>🍔 Menu</b> button will appear, choose items and checkout.\n\n👇 Please select a section:", "comment_prompt": "Leave a comment (e.g., Faster, More cheese):\nOr just write 'No'.", "no": "No", "address_prompt": "Now write your delivery address (or send location):", "comment_prompt_short": "Leave a comment (Or write 'No'):", "cabinet_title": "👤 <b>User Profile</b>", "name": "Name", "total_orders": "Total orders", "total_spent": "Total spent", "no_orders": "You have no orders yet.", "last_orders": "📦 <b>Your last 5 orders:</b>", "order_num": "Order", "date": "Date", "products": "Products", "total": "Total", "status": "Status", "order_accepted": "Your order is accepted!", "your_purchase": "Your purchase", "admin_wait": "Admins will review shortly."}
 }
 
 def get_text(lang, key):
@@ -55,7 +55,7 @@ def get_kafe_bino_keyboard(lang='uz'):
 def get_webapp_keyboard(lang='uz'):
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text=get_text(lang, "menu"), web_app=WebAppInfo(url=WEBAPP_URL))],
+            [KeyboardButton(text=get_text(lang, "menu"), web_app=WebAppInfo(url=f"{WEBAPP_URL}?lang={lang}"))],
             [KeyboardButton(text=get_text(lang, "back"))]
         ], resize_keyboard=True
     )
@@ -265,31 +265,35 @@ async def kuryer_reg_phone(message: Message, state: FSMContext):
 # --- CABINET & ORDERS ---
 @dp.message(F.text.in_([LANGS["uz"]["kabinet"], LANGS["ru"]["kabinet"], LANGS["en"]["kabinet"]]))
 async def cmd_cabinet(message: Message):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     stats = await db.get_user_stats(message.from_user.id)
     text = (
-        "👤 <b>Foydalanuvchi kabineti</b>\n\n"
-        f"👤 <b>Ism:</b> {message.from_user.full_name}\n"
+        f"{get_text(lang, 'cabinet_title')}\n\n"
+        f"👤 <b>{get_text(lang, 'name')}:</b> {message.from_user.full_name}\n"
         f"🆔 <b>ID:</b> {message.from_user.id}\n\n"
-        f"📦 <b>Jami xaridlar soni:</b> {stats['order_count']} ta\n"
-        f"💸 <b>Sarflangan summa:</b> {stats['total_spent']:,} so'm".replace(',', ' ')
+        f"📦 <b>{get_text(lang, 'total_orders')}:</b> {stats['order_count']}\n"
+        f"💸 <b>{get_text(lang, 'total_spent')}:</b> {stats['total_spent']:,}".replace(',', ' ')
     )
     await message.answer(text)
 
 @dp.message(F.text.in_([LANGS["uz"]["my_orders"], LANGS["ru"]["my_orders"], LANGS["en"]["my_orders"]]))
 async def cmd_my_orders(message: Message):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     orders = await db.get_user_orders(message.from_user.id, limit=5)
     if not orders:
-        return await message.answer("Sizda hali buyurtmalar yo'q.")
+        return await message.answer(get_text(lang, 'no_orders'))
         
-    text = "📦 <b>Sizning oxirgi 5 ta buyurtmangiz:</b>\n\n"
+    text = f"{get_text(lang, 'last_orders')}\n\n"
     for o in orders:
-        text += f"🔖 <b>Buyurtma #{o['id']}</b> ({o.get('order_type', 'Oddiy')})\n"
-        text += f"📅 Sana: {o['created_at']}\n"
-        text += "🛍 <b>Mahsulotlar:</b>\n"
+        text += f"🔖 <b>{get_text(lang, 'order_num')} #{o['id']}</b> ({o.get('order_type', 'Oddiy')})\n"
+        text += f"📅 {get_text(lang, 'date')}: {o['created_at']}\n"
+        text += f"🛍 <b>{get_text(lang, 'products')}:</b>\n"
         for item in o.get('items', []):
             text += f"  ▪️ {item['name']} x {item['quantity']}\n"
-        text += f"💰 Jami: {o['total_price']:,} so'm\n".replace(',', ' ')
-        text += f"📊 Holati: <b>{o['status']}</b>\n\n"
+        text += f"💰 {get_text(lang, 'total')}: {o['total_price']:,}".replace(',', ' ') + "\n"
+        text += f"📊 {get_text(lang, 'status')}: <b>{o['status']}</b>\n\n"
         
     await message.answer(text)
 
@@ -436,10 +440,12 @@ async def process_phone(message: Message, state: FSMContext):
     if data.get("order_type") == "Masofaviy":
         user = await db.get_user(message.from_user.id)
         lang = user.get('lang', 'uz') if user else 'uz'
-        await message.answer("Endi yetkazib berish uchun manzilingizni yozing (yoki lokatsiya yuboring):", reply_markup=get_location_keyboard(lang))
+        await message.answer(get_text(lang, "address_prompt"), reply_markup=get_location_keyboard(lang))
         await state.set_state(OrderFlow.waiting_for_address)
     else:
-        await message.answer("Qo'shimcha izoh qoldiring (Masalan: Tezroq, Pishloq ko'proq):\nYoki shunchaki 'Yoq' deb yozing.", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Yo'q")]], resize_keyboard=True))
+        user = await db.get_user(message.from_user.id)
+        lang = user.get('lang', 'uz') if user else 'uz'
+        await message.answer(get_text(lang, "comment_prompt"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "no"))]], resize_keyboard=True))
         await state.set_state(OrderFlow.waiting_for_comment)
 
 @dp.message(OrderFlow.waiting_for_address, F.location | F.text)
@@ -455,7 +461,7 @@ async def process_address(message: Message, state: FSMContext):
         location = message.text
     await state.update_data(location=location)
     
-    await message.answer("Qo'shimcha izoh qoldiring (Yoki 'Yoq' deb yozing):", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Yo'q")]], resize_keyboard=True))
+    await message.answer(get_text(lang, "comment_prompt_short"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "no"))]], resize_keyboard=True))
     await state.set_state(OrderFlow.waiting_for_comment)
 
 def format_location(loc):
