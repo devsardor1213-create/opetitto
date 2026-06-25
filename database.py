@@ -76,6 +76,20 @@ class Database:
         
         with open(self.webapp_products_file, 'w', encoding='utf-8') as f:
             json.dump(data_obj, f, ensure_ascii=False, indent=4)
+            
+        # Avtomatik ravishda InfinityFree serveriga yuklash
+        try:
+            import ftplib
+            ftp = ftplib.FTP()
+            ftp.connect("ftpupload.net", 21, timeout=10)
+            ftp.login("if0_42129168", "2NEBtsBiGlAwB")
+            ftp.set_pasv(True)
+            ftp.cwd("/htdocs/webapp")
+            with open(self.webapp_products_file, 'rb') as f:
+                ftp.storbinary('STOR products.json', f)
+            ftp.quit()
+        except Exception as e:
+            print(f"FTP Upload xatosi (products.json): {e}")
 
     async def connect(self):
         print("JSON bazasi ishga tushdi")

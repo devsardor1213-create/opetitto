@@ -3,12 +3,29 @@ import threading
 import time
 import re
 import os
+import sys
+
+# Windows konsolda emoji crashni oldini olish
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except:
+        pass
 
 print("Starting HTTP server on port 8088...")
-http_proc = subprocess.Popen(["python", "-m", "http.server", "8088"], cwd="webapp")
+# stderr ni yashirish (ConnectionResetError loglarini ko'rsatmaslik uchun)
+http_proc = subprocess.Popen(
+    ["python", "-m", "http.server", "8088"], 
+    cwd="webapp",
+    stderr=subprocess.DEVNULL
+)
 
 print("Starting localtunnel...")
-lt_proc = subprocess.Popen(["npx", "localtunnel", "--port", "8088"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, shell=True)
+lt_proc = subprocess.Popen(
+    ["npx", "localtunnel", "--port", "8088"], 
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
+    text=True, shell=True
+)
 
 url = None
 for line in iter(lt_proc.stdout.readline, ''):
@@ -40,7 +57,11 @@ with open("config.py", "w", encoding="utf-8") as f:
     f.write(new_content)
 
 print("Starting Telegram Bot...")
-bot_proc = subprocess.Popen(["python", "main.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+bot_proc = subprocess.Popen(
+    ["python", "main.py"], 
+    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
+    text=True, encoding='utf-8', errors='replace'
+)
 
 def print_bot_output():
     for line in iter(bot_proc.stdout.readline, ''):
@@ -53,7 +74,10 @@ try:
 except KeyboardInterrupt:
     pass
 finally:
-    http_proc.kill()
-    lt_proc.kill()
-    bot_proc.kill()
+    try: http_proc.kill()
+    except: pass
+    try: lt_proc.kill()
+    except: pass
+    try: bot_proc.kill()
+    except: pass
     print("All processes terminated.")

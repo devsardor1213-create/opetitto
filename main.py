@@ -13,6 +13,7 @@ from aiogram.fsm.state import StatesGroup, State
 from config import BOT_TOKEN, ADMINS, ADMIN_PASSWORD, WEBAPP_URL
 from database import Database
 
+
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -53,7 +54,7 @@ def get_webapp_keyboard():
 def get_admin_keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="➕ Fast Food qo'shish"), KeyboardButton(text="📝 O'chirish / Tahrirlash")],
+            [KeyboardButton(text="➕ MENU qo'shish"), KeyboardButton(text="📝 O'chirish / Tahrirlash")],
             [KeyboardButton(text="📢 Reklama tarqatish"), KeyboardButton(text="👥 Foydalanuvchilar")],
             [KeyboardButton(text="🚚 Kuryerlar ma'lumotlari"), KeyboardButton(text="⚙️ Aloqa sozlamalari")],
             [KeyboardButton(text="👨‍💻 Adminlar"), KeyboardButton(text="🏷 Kategoriyalar")],
@@ -213,7 +214,7 @@ async def kuryer_reg_name(message: Message, state: FSMContext):
 
 @dp.message(CourierReg.waiting_for_phone, F.contact | F.text)
 async def kuryer_reg_phone(message: Message, state: FSMContext):
-    if message.text == "❌ Bekor qilish": return await back_to_main(message, state)
+    if message.text and message.text == "❌ Bekor qilish": return await back_to_main(message, state)
     phone = message.contact.phone_number if message.contact else message.text
     data = await state.get_data()
     name = data['name']
@@ -382,7 +383,7 @@ async def process_table_after_checkout(message: Message, state: FSMContext):
 
 @dp.message(OrderFlow.waiting_for_phone, F.contact | F.text)
 async def process_phone(message: Message, state: FSMContext):
-    if message.text == "❌ Bekor qilish": return await back_to_main(message, state)
+    if message.text and message.text == "❌ Bekor qilish": return await back_to_main(message, state)
         
     phone = message.contact.phone_number if message.contact else message.text
     await state.update_data(phone=phone)
@@ -397,11 +398,13 @@ async def process_phone(message: Message, state: FSMContext):
 
 @dp.message(OrderFlow.waiting_for_address, F.location | F.text)
 async def process_address(message: Message, state: FSMContext):
-    if message.text == "❌ Bekor qilish": return await back_to_main(message, state)
+    if message.text and message.text == "❌ Bekor qilish": return await back_to_main(message, state)
         
     location = "Kiritilmagan"
-    if message.text != "⏩ O'tkazib yuborish":
-        location = f"{message.location.latitude},{message.location.longitude}" if message.location else message.text
+    if message.location:
+        location = f"{message.location.latitude},{message.location.longitude}"
+    elif message.text and message.text != "⏩ O'tkazib yuborish":
+        location = message.text
     await state.update_data(location=location)
     
     await message.answer("Qo'shimcha izoh qoldiring (Yoki 'Yoq' deb yozing):", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Yo'q")]], resize_keyboard=True))
@@ -507,6 +510,7 @@ async def admin_password_step(message: Message, state: FSMContext):
 # --- ADMIN ACTIONS ON ORDERS ---
 @dp.callback_query(F.data.startswith("acc_"))
 async def accept_order(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
     order_id = int(call.data.split("_")[1])
     await db.update_order_status(order_id, "Qabul qilindi va tayyorlanmoqda")
     
@@ -534,9 +538,9 @@ async def reject_order(call: CallbackQuery):
     order_id = int(call.data.split("_")[1])
     
     admin_name = await db.get_admin_session(call.from_user.id)
-    if await db.update_order_status(order_id, "Bekor qilingan"):
-        await call.answer("Buyurtma bekor qilindi.")
-        await call.message.edit_text(call.message.text + f"\n\n❌ Bekor qildi: <b>{admin_name}</b>")
+    await db.update_order_status(order_id, "Bekor qilingan")
+    await call.answer("Buyurtma bekor qilindi.")
+    await call.message.edit_text(call.message.text + f"\n\n❌ Bekor qildi: <b>{admin_name}</b>")
     
     orders = db.orders
     order = next((o for o in orders if o['id'] == order_id), None)
@@ -570,9 +574,7 @@ async def assign_courier(message: Message, state: FSMContext):
     orders = db.orders
     order = next((o for o in orders if o['id'] == order_id), None)
     if order:
-         order['courier_id'] = courier_id
          db.save_data()  # Removed await here
-         
          c_text = f"📦 <b>YANGI MASOFAVIY BUYURTMA</b>\n\n"
          c_text += f"📍 Manzil: {format_location(order['location'])}\n"
          c_text += f"📱 Mijoz tel: {order['phone']}\n"
@@ -726,7 +728,7 @@ async def add_admin_name(message: Message, state: FSMContext):
 @dp.callback_query(F.data.startswith("deladmin_"))
 async def delete_admin_acc(call: CallbackQuery):
     if not await is_admin(call.from_user.id): return
-    login = call.data.split("_")[1]
+    login = call.data.split("_", 1)[1]
     await db.remove_admin_account(login)
     await call.answer("Admin o'chirildi.")
     await admin_manage_accounts(call.message)
@@ -759,12 +761,12 @@ async def add_cat_finish(message: Message, state: FSMContext):
 @dp.callback_query(F.data.startswith("delcat_"))
 async def delete_cat(call: CallbackQuery):
     if not await is_admin(call.from_user.id): return
-    cat = call.data.split("_")[1]
+    cat = call.data.split("_", 1)[1]
     await db.remove_category(cat)
     await call.answer("Kategoriya o'chirildi.")
     await admin_manage_categories(call.message)
 
-@dp.message(F.text == "➕ Fast Food qo'shish")
+@dp.message(F.text == "➕ MENU qo'shish")
 async def admin_add_product_start(message: Message, state: FSMContext):
     if not await is_admin(message.from_user.id): return
     await message.answer("🍔 Yangi mahsulot nomini kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
@@ -773,10 +775,20 @@ async def admin_add_product_start(message: Message, state: FSMContext):
 @dp.message(AddProduct.waiting_for_name)
 async def add_product_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
-    keyboard = ReplyKeyboardMarkup(keyboard=[
-        [KeyboardButton(text="Burgerlar"), KeyboardButton(text="Lavashlar")],
-        [KeyboardButton(text="Ichimliklar"), KeyboardButton(text="Boshqa")]
-    ], resize_keyboard=True)
+    
+    categories = await db.get_categories()
+    kb_buttons = []
+    row = []
+    for cat in categories:
+        row.append(KeyboardButton(text=cat))
+        if len(row) == 2:
+            kb_buttons.append(row)
+            row = []
+    if row:
+        kb_buttons.append(row)
+        
+    keyboard = ReplyKeyboardMarkup(keyboard=kb_buttons, resize_keyboard=True)
+    
     await message.answer("Kategoriyani tanlang:", reply_markup=keyboard)
     await state.set_state(AddProduct.waiting_for_category)
 
@@ -872,27 +884,37 @@ async def start_webapp():
     from aiohttp import web
     import os
     
+    webapp_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'webapp')
+    
     async def index_handler(request):
-        return web.FileResponse('webapp/index.html')
+        index_file = os.path.join(webapp_dir, 'index.html')
+        if os.path.exists(index_file):
+            return web.FileResponse(index_file)
+        return web.Response(text="Bot is running!", content_type="text/html")
+    
+    # Healthcheck uchun (serverlar sog'liq tekshiradi)
+    async def health_handler(request):
+        return web.Response(text="OK")
         
     app = web.Application()
-    # Asosiy sahifa (index.html)
+    app.router.add_get('/health', health_handler)
+    # WebApp statik fayllarni serve qilish (index.html, style.css, app.js, images/)
     app.router.add_get('/', index_handler)
-    # Qolgan statik fayllarni xizmat qilish (css, js, rasm)
-    app.router.add_static('/', 'webapp')
+    app.router.add_static('/', webapp_dir)
     
     runner = web.AppRunner(app)
     await runner.setup()
-    # Railway'da PORT o'zgaruvchisi avtomatik beriladi
     port = int(os.environ.get('PORT', 8080))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
-    print(f"🌐 WebApp server {port}-portda ishga tushdi")
+    print(f"[WEB] Server {port}-portda ishga tushdi")
 
 async def main():
     await db.connect()
     try:
         print("Bot ishga tushdi...")
+        # Oldingi webhook ni o'chirish (conflict xatosini oldini olish)
+        await bot.delete_webhook(drop_pending_updates=True)
         # WebApp serverni orqa fonda ishga tushirish
         asyncio.create_task(start_webapp())
         await dp.start_polling(bot)
