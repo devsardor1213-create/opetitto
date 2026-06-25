@@ -97,7 +97,7 @@ class Database:
     async def close(self):
         self.save_data()
 
-    async def add_user(self, telegram_id, fullname, phone=None):
+    async def add_user(self, telegram_id, fullname, phone=None, lang="uz"):
         telegram_id_str = str(telegram_id)
         if telegram_id_str not in self.users:
             self.users[telegram_id_str] = {
@@ -105,8 +105,15 @@ class Database:
                 "telegram_id": telegram_id,
                 "fullname": fullname,
                 "phone": phone,
+                "lang": lang,
                 "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
             }
+            self.save_data()
+
+    async def set_user_lang(self, telegram_id, lang):
+        telegram_id_str = str(telegram_id)
+        if telegram_id_str in self.users:
+            self.users[telegram_id_str]['lang'] = lang
             self.save_data()
 
     async def get_user(self, telegram_id):
@@ -190,6 +197,19 @@ class Database:
             if p["id"] == product_id:
                 p["is_active"] = 0 if p.get("is_active", 1) == 1 else 1
                 break
+        self.save_data()
+
+    async def edit_product(self, product_id, new_price, new_image):
+        for p in self.products:
+            if p["id"] == product_id:
+                p["price"] = new_price
+                if new_image:
+                    p["image"] = new_image
+                break
+        self.save_data()
+        
+    async def delete_product(self, product_id):
+        self.products = [p for p in self.products if p["id"] != product_id]
         self.save_data()
 
     async def get_couriers(self):

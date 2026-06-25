@@ -20,34 +20,43 @@ bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTM
 dp = Dispatcher()
 db = Database()
 
+LANGS = {
+    "uz": {"start": "Assalomu alaykum", "menu": "🍔 Menyu", "back": "🔙 Asosiy menyu", "kafe": "🏢 Kafe + Bino", "masofaviy": "🛵 Masofaviy", "kuryer": "📦 Kuryer bo'lish", "kabinet": "👤 Kabinetim", "aloqa": "☎️ Admin bilan aloqa", "xona": "🚪 Xona", "stollar": "🍽 Kafe", "cancel": "❌ Bekor qilish", "send_loc": "📍 Lokatsiyani yuborish", "skip": "⏩ O'tkazib yuborish", "send_phone": "📱 Raqamni yuborish", "main_menu": "Bosh menyuga qaytdingiz.", "choose_loc": "Joylashuvni tanlang:", "room_num": "Xona raqamini kiriting:", "table_num": "Stol raqamini kiriting:", "remote_order": "Masofaviy buyurtma!\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", "start_msg": "🔥 <b>Food Markaziga xush kelibsiz!</b>\n\n📖 <b>Qisqacha qo'llanma:</b>\n1️⃣ Avval yetkazib berish turini tanlang:\n   🏢 <b>Kafe + Bino:</b> Kafeda o'tirganingizda yoki bino xonalariga yetkazish uchun.\n   🛵 <b>Masofaviy:</b> Uyingizga yoki boshqa manzilga eltib berish uchun.\n2️⃣ So'ngra <b>🍔 Menyu</b> tugmasi paydo bo'ladi, o'sha yerdan mahsulot tanlab xaridni yakunlaysiz.\n\n👇 Iltimos, o'zingizga kerakli bo'limni tanlang:"},
+    "ru": {"start": "Здравствуйте", "menu": "🍔 Меню", "back": "🔙 Главное меню", "kafe": "🏢 Кафе + Здание", "masofaviy": "🛵 Удаленно", "kuryer": "📦 Стать курьером", "kabinet": "👤 Мой кабинет", "aloqa": "☎️ Связь с админом", "xona": "🚪 Комната", "stollar": "🍽 Кафе", "cancel": "❌ Отмена", "send_loc": "📍 Отправить локацию", "skip": "⏩ Пропустить", "send_phone": "📱 Отправить номер", "main_menu": "Вы вернулись в главное меню.", "choose_loc": "Выберите место:", "room_num": "Введите номер комнаты:", "table_num": "Введите номер стола:", "remote_order": "Удаленный заказ!\nВыберите продукты через кнопку <b>🍔 Меню</b>:", "start_msg": "🔥 <b>Добро пожаловать в Food Центр!</b>\n\n📖 <b>Краткое руководство:</b>\n1️⃣ Сначала выберите тип доставки:\n   🏢 <b>Кафе + Здание:</b> Для доставки в комнату или если сидите в кафе.\n   🛵 <b>Удаленно:</b> Для доставки домой или по другому адресу.\n2️⃣ Затем появится кнопка <b>🍔 Меню</b>, выберите продукты и завершите заказ.\n\n👇 Пожалуйста, выберите нужный раздел:"},
+    "en": {"start": "Hello", "menu": "🍔 Menu", "back": "🔙 Main menu", "kafe": "🏢 Cafe + Building", "masofaviy": "🛵 Delivery", "kuryer": "📦 Become courier", "kabinet": "👤 My Profile", "aloqa": "☎️ Contact Admin", "xona": "🚪 Room", "stollar": "🍽 Cafe", "cancel": "❌ Cancel", "send_loc": "📍 Send Location", "skip": "⏩ Skip", "send_phone": "📱 Send Number", "main_menu": "Returned to main menu.", "choose_loc": "Choose location:", "room_num": "Enter room number:", "table_num": "Enter table number:", "remote_order": "Remote delivery!\nChoose items via the <b>🍔 Menu</b> button:", "start_msg": "🔥 <b>Welcome to Food Center!</b>\n\n📖 <b>Quick guide:</b>\n1️⃣ First select the delivery type:\n   🏢 <b>Cafe + Building:</b> For delivery to your room or table.\n   🛵 <b>Delivery:</b> For home delivery.\n2️⃣ Then the <b>🍔 Menu</b> button will appear, choose items and checkout.\n\n👇 Please select a section:"}
+}
+
+def get_text(lang, key):
+    return LANGS.get(lang, LANGS["uz"]).get(key, LANGS["uz"].get(key, ""))
+
 async def is_admin(user_id):
     db_admins = await db.get_admins()
     return user_id in ADMINS or user_id in db_admins
 
 # --- Keyboards ---
-def get_start_keyboard():
+def get_start_keyboard(lang='uz'):
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🏢 Kafe + Bino"), KeyboardButton(text="🛵 Masofaviy")],
-            [KeyboardButton(text="📦 Kuryer bo'lish"), KeyboardButton(text="👤 Kabinetim")],
-            [KeyboardButton(text="☎️ Admin bilan aloqa")]
+            [KeyboardButton(text=get_text(lang, "kafe")), KeyboardButton(text=get_text(lang, "masofaviy"))],
+            [KeyboardButton(text=get_text(lang, "kuryer")), KeyboardButton(text=get_text(lang, "kabinet"))],
+            [KeyboardButton(text=get_text(lang, "aloqa"))]
         ],
         resize_keyboard=True
     )
 
-def get_kafe_bino_keyboard():
+def get_kafe_bino_keyboard(lang='uz'):
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🚪 Xona"), KeyboardButton(text="🍽 Kafe")],
-            [KeyboardButton(text="🔙 Asosiy menyu")]
+            [KeyboardButton(text=get_text(lang, "xona")), KeyboardButton(text=get_text(lang, "stollar"))],
+            [KeyboardButton(text=get_text(lang, "back"))]
         ], resize_keyboard=True
     )
 
-def get_webapp_keyboard():
+def get_webapp_keyboard(lang='uz'):
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="🍔 Menyu", web_app=WebAppInfo(url=WEBAPP_URL))],
-            [KeyboardButton(text="🔙 Asosiy menyu")]
+            [KeyboardButton(text=get_text(lang, "menu"), web_app=WebAppInfo(url=WEBAPP_URL))],
+            [KeyboardButton(text=get_text(lang, "back"))]
         ], resize_keyboard=True
     )
 
@@ -64,15 +73,15 @@ def get_admin_keyboard():
         resize_keyboard=True
     )
 
-def get_contact_keyboard():
-    return ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="📱 Raqamni yuborish", request_contact=True)], [KeyboardButton(text="❌ Bekor qilish")]], resize_keyboard=True)
+def get_contact_keyboard(lang='uz'):
+    return ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "send_phone"), request_contact=True)], [KeyboardButton(text=get_text(lang, "cancel"))]], resize_keyboard=True)
 
-def get_location_keyboard():
+def get_location_keyboard(lang='uz'):
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="📍 Lokatsiyani yuborish", request_location=True)], 
-            [KeyboardButton(text="⏩ O'tkazib yuborish")],
-            [KeyboardButton(text="❌ Bekor qilish")]
+            [KeyboardButton(text=get_text(lang, "send_loc"), request_location=True)], 
+            [KeyboardButton(text=get_text(lang, "skip"))],
+            [KeyboardButton(text=get_text(lang, "cancel"))]
         ], 
         resize_keyboard=True
     )
@@ -99,6 +108,10 @@ class AddProduct(StatesGroup):
     waiting_for_name = State()
     waiting_for_category = State()
     waiting_for_desc = State()
+    waiting_for_price = State()
+    waiting_for_image = State()
+
+class EditProduct(StatesGroup):
     waiting_for_price = State()
     waiting_for_image = State()
 
@@ -130,6 +143,21 @@ async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     await db.add_user(message.from_user.id, message.from_user.full_name)
     
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="🇺🇿 O'zbek")],
+            [KeyboardButton(text="🇷🇺 Русский")],
+            [KeyboardButton(text="🇬🇧 English")]
+        ], resize_keyboard=True
+    )
+    await message.answer("Tilni tanlang / Выберите язык / Choose language:", reply_markup=keyboard)
+
+@dp.message(F.text.in_(["🇺🇿 O'zbek", "🇷🇺 Русский", "🇬🇧 English"]))
+async def lang_selected(message: Message, state: FSMContext):
+    lang_map = {"🇺🇿 O'zbek": "uz", "🇷🇺 Русский": "ru", "🇬🇧 English": "en"}
+    lang = lang_map[message.text]
+    await db.set_user_lang(message.from_user.id, lang)
+    
     try:
         await bot.set_chat_menu_button(
             chat_id=message.chat.id, 
@@ -138,60 +166,64 @@ async def cmd_start(message: Message, state: FSMContext):
     except Exception as e:
         print(f"Menu button set error: {e}")
 
-    await message.answer(
-        f"Assalomu alaykum, <b>{message.from_user.full_name}</b>!\n\n"
-        "🔥 <b>Food Markaziga xush kelibsiz!</b>\n\n"
-        "📖 <b>Qisqacha qo'llanma:</b>\n"
-        "1️⃣ Avval yetkazib berish turini tanlang:\n"
-        "   🏢 <b>Kafe + Bino:</b> Kafeda o'tirganingizda yoki bino xonalariga yetkazish uchun.\n"
-        "   🛵 <b>Masofaviy:</b> Uyingizga yoki boshqa manzilga eltib berish uchun.\n"
-        "2️⃣ So'ngra <b>🍔 Menyu</b> tugmasi paydo bo'ladi, o'sha yerdan mahsulot tanlab xaridni yakunlaysiz.\n\n"
-        "👇 Iltimos, o'zingizga kerakli bo'limni tanlang:",
-        reply_markup=get_start_keyboard()
-    )
+    await message.answer(get_text(lang, 'start') + f", <b>{message.from_user.full_name}</b>!\n\n" + get_text(lang, 'start_msg'), reply_markup=get_start_keyboard(lang))
 
-@dp.message(F.text == "🔙 Asosiy menyu")
-@dp.message(F.text == "❌ Bekor qilish")
+@dp.message(F.text.in_([LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]))
+@dp.message(F.text.in_([LANGS["uz"]["cancel"], LANGS["ru"]["cancel"], LANGS["en"]["cancel"]]))
 async def back_to_main(message: Message, state: FSMContext):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     await state.clear()
-    await message.answer("Bosh menyuga qaytdingiz.", reply_markup=get_start_keyboard())
+    await message.answer(get_text(lang, "main_menu"), reply_markup=get_start_keyboard(lang))
 
 # --- ORDER FLOW START ---
-@dp.message(F.text == "🏢 Kafe + Bino")
+@dp.message(F.text.in_([LANGS["uz"]["kafe"], LANGS["ru"]["kafe"], LANGS["en"]["kafe"]]))
 async def kafe_bino(message: Message, state: FSMContext):
-    await message.answer("Joylashuvni tanlang:", reply_markup=get_kafe_bino_keyboard())
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    await message.answer(get_text(lang, "choose_loc"), reply_markup=get_kafe_bino_keyboard(lang))
 
-@dp.message(F.text == "🚪 Xona")
+@dp.message(F.text.in_([LANGS["uz"]["xona"], LANGS["ru"]["xona"], LANGS["en"]["xona"]]))
 async def choose_xona(message: Message, state: FSMContext):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     await state.update_data(order_type="Xona")
-    await message.answer("Xona raqamini kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+    await message.answer(get_text(lang, "room_num"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
     await state.set_state(OrderFlow.waiting_for_room)
 
 @dp.message(OrderFlow.waiting_for_room, F.text)
 async def process_room(message: Message, state: FSMContext):
-    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
-    await message.answer(f"Xona: {message.text}. Tasdiqlandi!\n\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", reply_markup=get_webapp_keyboard())
+    await message.answer(f"{get_text(lang, 'xona')}: {message.text}.\n\n{get_text(lang, 'menu')}", reply_markup=get_webapp_keyboard(lang))
 
-@dp.message(F.text == "🍽 Kafe")
+@dp.message(F.text.in_([LANGS["uz"]["stollar"], LANGS["ru"]["stollar"], LANGS["en"]["stollar"]]))
 async def choose_kafe(message: Message, state: FSMContext):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     await state.update_data(order_type="Kafe")
-    await message.answer("Stol raqamini kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+    await message.answer(get_text(lang, "table_num"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
     await state.set_state(OrderFlow.waiting_for_table)
 
 @dp.message(OrderFlow.waiting_for_table, F.text)
 async def process_table(message: Message, state: FSMContext):
-    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
-    await message.answer(f"Stol: {message.text}. Tasdiqlandi!\n\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", reply_markup=get_webapp_keyboard())
+    await message.answer(f"{get_text(lang, 'stollar')}: {message.text}.\n\n{get_text(lang, 'menu')}", reply_markup=get_webapp_keyboard(lang))
 
-@dp.message(F.text == "🛵 Masofaviy")
+@dp.message(F.text.in_([LANGS["uz"]["masofaviy"], LANGS["ru"]["masofaviy"], LANGS["en"]["masofaviy"]]))
 async def choose_masofaviy(message: Message, state: FSMContext):
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
     await state.update_data(order_type="Masofaviy", room_table="Yo'q")
-    await message.answer("Masofaviy buyurtma!\nPastdagi <b>🍔 Menyu</b> tugmasini bosib mahsulot tanlang:", reply_markup=get_webapp_keyboard())
+    await message.answer(get_text(lang, "remote_order"), reply_markup=get_webapp_keyboard(lang))
 
 # --- COURIER REGISTRATION ---
-@dp.message(F.text == "📦 Kuryer bo'lish")
+@dp.message(F.text.in_([LANGS["uz"]["kuryer"], LANGS["ru"]["kuryer"], LANGS["en"]["kuryer"]]))
 async def kuryer_reg_start(message: Message, state: FSMContext):
     await message.answer("Kuryer bo'lish uchun maxfiy parolni kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
     await state.set_state(CourierReg.waiting_for_password)
@@ -231,7 +263,7 @@ async def kuryer_reg_phone(message: Message, state: FSMContext):
         except: pass
 
 # --- CABINET & ORDERS ---
-@dp.message(F.text == "👤 Kabinetim")
+@dp.message(F.text.in_([LANGS["uz"]["kabinet"], LANGS["ru"]["kabinet"], LANGS["en"]["kabinet"]]))
 async def cmd_cabinet(message: Message):
     stats = await db.get_user_stats(message.from_user.id)
     text = (
@@ -243,7 +275,7 @@ async def cmd_cabinet(message: Message):
     )
     await message.answer(text)
 
-@dp.message(F.text == "📦 Buyurtmalarim")
+@dp.message(F.text.in_([LANGS["uz"]["my_orders"], LANGS["ru"]["my_orders"], LANGS["en"]["my_orders"]]))
 async def cmd_my_orders(message: Message):
     orders = await db.get_user_orders(message.from_user.id, limit=5)
     if not orders:
@@ -261,7 +293,7 @@ async def cmd_my_orders(message: Message):
         
     await message.answer(text)
 
-@dp.message(F.text == "☎️ Admin bilan aloqa")
+@dp.message(F.text.in_([LANGS["uz"]["aloqa"], LANGS["ru"]["aloqa"], LANGS["en"]["aloqa"]]))
 async def cmd_contact_admin(message: Message):
     contact = await db.get_admin_contact()
     name = contact.get('name', 'Fast Food Admin')
@@ -298,21 +330,25 @@ async def web_app_data_handler(message: Message, state: FSMContext):
             await state.update_data(items=items, total=total)
             
             if not order_type:
+                user = await db.get_user(message.from_user.id)
+                lang = user.get('lang', 'uz') if user else 'uz'
                 text = "🛍 <b>Savat qabul qilindi!</b>\n\nIltimos, buyurtmani rasmiylashtirish uchun yetkazib berish turini tanlang:"
                 await message.answer(text, reply_markup=ReplyKeyboardMarkup(
-                    keyboard=[[KeyboardButton(text="🏢 Kafe + Bino"), KeyboardButton(text="🛵 Masofaviy")]],
+                    keyboard=[[KeyboardButton(text=get_text(lang, "kafe")), KeyboardButton(text=get_text(lang, "masofaviy"))]],
                     resize_keyboard=True
                 ))
                 await state.set_state(OrderFlow.waiting_for_type_after_checkout)
                 return
             
+            user = await db.get_user(message.from_user.id)
+            lang = user.get('lang', 'uz') if user else 'uz'
             text = "🛍 <b>Savat qabul qilindi.</b>\nSiz quyidagi mahsulotlarni tanladingiz:\n\n"
             for item in items:
                 text += f"▪️ {item['name']} x {item['quantity']} = {item['price'] * item['quantity']:,} so'm\n".replace(',', ' ')
             text += f"\n💰 <b>Jami summa:</b> {total:,} so'm\n\n".replace(',', ' ')
             text += "Iltimos, tasdiqlash uchun <b>📱 Raqamni yuborish</b> tugmasi orqali telefoningizni yuboring:"
             
-            await message.answer(text, reply_markup=get_contact_keyboard())
+            await message.answer(text, reply_markup=get_contact_keyboard(lang))
             await state.set_state(OrderFlow.waiting_for_phone)
     except Exception as e:
          print(e)
@@ -320,17 +356,19 @@ async def web_app_data_handler(message: Message, state: FSMContext):
 
 @dp.message(OrderFlow.waiting_for_type_after_checkout, F.text)
 async def process_type_after_checkout(message: Message, state: FSMContext):
-    if message.text == "🏢 Kafe + Bino":
-        await message.answer("Joylashuvni tanlang:", reply_markup=get_kafe_bino_keyboard())
-    elif message.text == "🚪 Xona":
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text in [LANGS["uz"]["kafe"], LANGS["ru"]["kafe"], LANGS["en"]["kafe"]]:
+        await message.answer(get_text(lang, "choose_loc"), reply_markup=get_kafe_bino_keyboard(lang))
+    elif message.text in [LANGS["uz"]["xona"], LANGS["ru"]["xona"], LANGS["en"]["xona"]]:
         await state.update_data(order_type="Xona")
-        await message.answer("Xona raqamini kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+        await message.answer(get_text(lang, "room_num"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
         await state.set_state(OrderFlow.waiting_for_room_after_checkout)
-    elif message.text == "🍽 Kafe":
+    elif message.text in [LANGS["uz"]["stollar"], LANGS["ru"]["stollar"], LANGS["en"]["stollar"]]:
         await state.update_data(order_type="Kafe")
-        await message.answer("Stol raqamini kiriting:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+        await message.answer(get_text(lang, "table_num"), reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
         await state.set_state(OrderFlow.waiting_for_table_after_checkout)
-    elif message.text == "🛵 Masofaviy":
+    elif message.text in [LANGS["uz"]["masofaviy"], LANGS["ru"]["masofaviy"], LANGS["en"]["masofaviy"]]:
         await state.update_data(order_type="Masofaviy", room_table="Yo'q")
         
         data = await state.get_data()
@@ -347,7 +385,9 @@ async def process_type_after_checkout(message: Message, state: FSMContext):
 
 @dp.message(OrderFlow.waiting_for_room_after_checkout, F.text)
 async def process_room_after_checkout(message: Message, state: FSMContext):
-    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
     
     data = await state.get_data()
@@ -360,12 +400,14 @@ async def process_room_after_checkout(message: Message, state: FSMContext):
     text += f"\n💰 <b>Jami summa:</b> {total:,} so'm\n\n".replace(',', ' ')
     text += "Iltimos, tasdiqlash uchun <b>📱 Raqamni yuborish</b> tugmasi orqali telefoningizni yuboring:"
     
-    await message.answer(text, reply_markup=get_contact_keyboard())
+    await message.answer(text, reply_markup=get_contact_keyboard(lang))
     await state.set_state(OrderFlow.waiting_for_phone)
 
 @dp.message(OrderFlow.waiting_for_table_after_checkout, F.text)
 async def process_table_after_checkout(message: Message, state: FSMContext):
-    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
     
     data = await state.get_data()
@@ -378,19 +420,23 @@ async def process_table_after_checkout(message: Message, state: FSMContext):
     text += f"\n💰 <b>Jami summa:</b> {total:,} so'm\n\n".replace(',', ' ')
     text += "Iltimos, tasdiqlash uchun <b>📱 Raqamni yuborish</b> tugmasi orqali telefoningizni yuboring:"
     
-    await message.answer(text, reply_markup=get_contact_keyboard())
+    await message.answer(text, reply_markup=get_contact_keyboard(lang))
     await state.set_state(OrderFlow.waiting_for_phone)
 
 @dp.message(OrderFlow.waiting_for_phone, F.contact | F.text)
 async def process_phone(message: Message, state: FSMContext):
-    if message.text and message.text == "❌ Bekor qilish": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text and message.text in [LANGS["uz"]["cancel"], LANGS["ru"]["cancel"], LANGS["en"]["cancel"]]: return await back_to_main(message, state)
         
     phone = message.contact.phone_number if message.contact else message.text
     await state.update_data(phone=phone)
     
     data = await state.get_data()
     if data.get("order_type") == "Masofaviy":
-        await message.answer("Endi yetkazib berish uchun manzilingizni yozing (yoki lokatsiya yuboring):", reply_markup=get_location_keyboard())
+        user = await db.get_user(message.from_user.id)
+        lang = user.get('lang', 'uz') if user else 'uz'
+        await message.answer("Endi yetkazib berish uchun manzilingizni yozing (yoki lokatsiya yuboring):", reply_markup=get_location_keyboard(lang))
         await state.set_state(OrderFlow.waiting_for_address)
     else:
         await message.answer("Qo'shimcha izoh qoldiring (Masalan: Tezroq, Pishloq ko'proq):\nYoki shunchaki 'Yoq' deb yozing.", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Yo'q")]], resize_keyboard=True))
@@ -398,12 +444,14 @@ async def process_phone(message: Message, state: FSMContext):
 
 @dp.message(OrderFlow.waiting_for_address, F.location | F.text)
 async def process_address(message: Message, state: FSMContext):
-    if message.text and message.text == "❌ Bekor qilish": return await back_to_main(message, state)
+    user = await db.get_user(message.from_user.id)
+    lang = user.get('lang', 'uz') if user else 'uz'
+    if message.text and message.text in [LANGS["uz"]["cancel"], LANGS["ru"]["cancel"], LANGS["en"]["cancel"]]: return await back_to_main(message, state)
         
     location = "Kiritilmagan"
     if message.location:
         location = f"{message.location.latitude},{message.location.longitude}"
-    elif message.text and message.text != "⏩ O'tkazib yuborish":
+    elif message.text and message.text not in [LANGS["uz"]["skip"], LANGS["ru"]["skip"], LANGS["en"]["skip"]]:
         location = message.text
     await state.update_data(location=location)
     
@@ -843,24 +891,96 @@ async def admin_edit_products(message: Message):
     keyboard = []
     for p in all_products:
         status = "✅" if p.get('is_active', 1) else "❌"
-        keyboard.append([InlineKeyboardButton(text=f"{status} {p['name']} (O'chirish/Yoqish)", callback_data=f"del_{p['id']}")])
+        keyboard.append([InlineKeyboardButton(text=f"{status} {p['name']}", callback_data=f"prodmanage_{p['id']}")])
         
-    await message.answer("O'chirish yoki Yoqish uchun ustiga bosing:", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+    await message.answer("Tahrirlash yoki o'chirish uchun mahsulotni tanlang:", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
+@dp.callback_query(F.data.startswith("prodmanage_"))
+async def admin_manage_product_options(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
+    product_id = int(call.data.split("_")[1])
+    product = next((p for p in db.products if p['id'] == product_id), None)
+    if not product: return await call.answer("Mahsulot topilmadi!")
+    
+    status_text = "Vaqtinchalik O'chirish" if product.get('is_active', 1) else "Vaqtinchalik Yoqish"
+    keyboard = [
+        [InlineKeyboardButton(text=f"👁 {status_text}", callback_data=f"del_{product_id}")],
+        [InlineKeyboardButton(text="✏️ Tahrirlash", callback_data=f"editprod_{product_id}")],
+        [InlineKeyboardButton(text="🗑 Butunlay o'chirish", callback_data=f"harddel_{product_id}")]
+    ]
+    status_display = "✅ Faol" if product.get('is_active', 1) else "❌ O'chirilgan"
+    await call.message.edit_text(f"🍔 <b>Mahsulot:</b> {product['name']}\n💰 <b>Narxi:</b> {product['price']:,} so'm\n📊 <b>Holati:</b> {status_display}".replace(',', ' '), reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
 
 @dp.callback_query(F.data.startswith("del_"))
-async def admin_delete_product(call: CallbackQuery):
+async def admin_toggle_product(call: CallbackQuery):
     if not await is_admin(call.from_user.id): return
     product_id = int(call.data.split("_")[1])
     await db.toggle_product(product_id)
-    
-    all_products = db.products
-    keyboard = []
-    for p in all_products:
-        status = "✅" if p.get('is_active', 1) else "❌"
-        keyboard.append([InlineKeyboardButton(text=f"{status} {p['name']} (O'chirish/Yoqish)", callback_data=f"del_{p['id']}")])
-    
-    await call.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
     await call.answer("Holati o'zgartirildi!")
+    
+    product = next((p for p in db.products if p['id'] == product_id), None)
+    if not product: return
+    
+    status_text = "Vaqtinchalik O'chirish" if product.get('is_active', 1) else "Vaqtinchalik Yoqish"
+    keyboard = [
+        [InlineKeyboardButton(text=f"👁 {status_text}", callback_data=f"del_{product_id}")],
+        [InlineKeyboardButton(text="✏️ Tahrirlash", callback_data=f"editprod_{product_id}")],
+        [InlineKeyboardButton(text="🗑 Butunlay o'chirish", callback_data=f"harddel_{product_id}")]
+    ]
+    status_display = "✅ Faol" if product.get('is_active', 1) else "❌ O'chirilgan"
+    await call.message.edit_text(f"🍔 <b>Mahsulot:</b> {product['name']}\n💰 <b>Narxi:</b> {product['price']:,} so'm\n📊 <b>Holati:</b> {status_display}".replace(',', ' '), reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
+@dp.callback_query(F.data.startswith("harddel_"))
+async def admin_hard_delete_product(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
+    product_id = int(call.data.split("_")[1])
+    await db.delete_product(product_id)
+    await call.answer("Butunlay o'chirildi!")
+    await call.message.delete()
+
+@dp.callback_query(F.data.startswith("editprod_"))
+async def admin_edit_product_start(call: CallbackQuery, state: FSMContext):
+    if not await is_admin(call.from_user.id): return
+    product_id = int(call.data.split("_")[1])
+    await state.update_data(edit_product_id=product_id)
+    await call.message.answer("✏️ Yangi narxni kiriting (raqamda):", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+    await state.set_state(EditProduct.waiting_for_price)
+
+@dp.message(EditProduct.waiting_for_price)
+async def admin_edit_product_price(message: Message, state: FSMContext):
+    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    if not message.text.isdigit(): return await message.answer("Faqat raqam kiriting!")
+    await state.update_data(edit_price=int(message.text))
+    await message.answer("🖼 Endi yangi rasmni yuboring (yoki rasmni o'zgartirmaslik uchun 'O'tkazib yuborish' ni bosing):", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="⏩ O'tkazib yuborish")], [KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
+    await state.set_state(EditProduct.waiting_for_image)
+
+@dp.message(EditProduct.waiting_for_image)
+async def admin_edit_product_image(message: Message, state: FSMContext):
+    if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
+    
+    data = await state.get_data()
+    product_id = data['edit_product_id']
+    new_price = data['edit_price']
+    image_url = ""
+    
+    if message.text == "⏩ O'tkazib yuborish":
+        pass
+    elif message.photo:
+        file_id = message.photo[-1].file_id
+        file = await bot.get_file(file_id)
+        import os
+        os.makedirs("webapp/images", exist_ok=True)
+        file_path = f"webapp/images/{file_id}.jpg"
+        await bot.download_file(file.file_path, file_path)
+        image_url = f"images/{file_id}.jpg"
+    elif message.text and message.text.startswith("http"):
+        image_url = message.text
+    else:
+        return await message.answer("Noto'g'ri rasm! Rasmni rasm qilib yuboring, URL bering yoki 'O'tkazib yuborish' bosing.")
+        
+    await db.edit_product(product_id, new_price, image_url)
+    await state.clear()
+    await message.answer("✅ Mahsulot muvaffaqiyatli tahrirlandi!", reply_markup=get_admin_keyboard())
 
 @dp.message(F.text == "📢 Reklama tarqatish")
 async def admin_broadcast_start(message: Message, state: FSMContext):
