@@ -883,8 +883,9 @@ async def add_product_desc(message: Message, state: FSMContext):
 
 @dp.message(AddProduct.waiting_for_price)
 async def add_product_price(message: Message, state: FSMContext):
-    if not message.text.isdigit(): return await message.answer("Faqat raqam kiriting!")
-    await state.update_data(price=int(message.text))
+    price_text = message.text.replace(" ", "").replace(",", "").replace(".", "")
+    if not price_text.isdigit(): return await message.answer("Faqat raqam kiriting!")
+    await state.update_data(price=int(price_text))
     await message.answer("🖼 Endi mahsulot rasmini yuboring (Rasm fayli ko'rinishida yoki rasm linkini matn qilib):")
     await state.set_state(AddProduct.waiting_for_image)
 
@@ -992,8 +993,9 @@ async def admin_edit_product_start(call: CallbackQuery, state: FSMContext):
 @dp.message(EditProduct.waiting_for_price)
 async def admin_edit_product_price(message: Message, state: FSMContext):
     if message.text == "🔙 Asosiy menyu": return await back_to_main(message, state)
-    if not message.text.isdigit(): return await message.answer("Faqat raqam kiriting!")
-    await state.update_data(edit_price=int(message.text))
+    price_text = message.text.replace(" ", "").replace(",", "").replace(".", "")
+    if not price_text.isdigit(): return await message.answer("Faqat raqam kiriting!")
+    await state.update_data(edit_price=int(price_text))
     await message.answer("🖼 Endi yangi rasmni yuboring (yoki rasmni o'zgartirmaslik uchun 'O'tkazib yuborish' ni bosing):", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="⏩ O'tkazib yuborish")], [KeyboardButton(text="🔙 Asosiy menyu")]], resize_keyboard=True))
     await state.set_state(EditProduct.waiting_for_image)
 
