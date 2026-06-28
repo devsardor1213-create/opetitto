@@ -5,7 +5,7 @@ from datetime import datetime
 class Database:
     def __init__(self):
         self.db_file = "database_state.json"
-        self.webapp_products_file = os.path.join("webapp", "products.json")
+        self.webapp_products_file = "products.json"
         self.load_data()
 
     def load_data(self):
@@ -71,18 +71,12 @@ class Database:
             "products": active_products
         }
         
-        os.makedirs(os.path.dirname(self.webapp_products_file), exist_ok=True)
+        dir_name = os.path.dirname(self.webapp_products_file)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
         
         with open(self.webapp_products_file, 'w', encoding='utf-8') as f:
             json.dump(data_obj, f, ensure_ascii=False, indent=4)
-            
-        # Avtomatik ravishda InfinityFree serveriga yuklash (products.json va rasmlar)
-        try:
-            import subprocess
-            import sys
-            subprocess.Popen([sys.executable, "sync_webapp_ftp.py"])
-        except Exception as e:
-            print(f"FTP Upload xatosi: {e}")
 
     async def connect(self):
         print("JSON bazasi ishga tushdi")

@@ -9,5 +9,11 @@ ADMIN_PASSWORD = "superadmin123"
 # Adminlarning Telegram ID raqamlari
 ADMINS = [123456789] 
 
-# Telegram Web App uchun URL (InfinityFree Serverdagi frontend)
-WEBAPP_URL = "https://ziyoilm.page.gd/webapp"
+# Telegram Web App uchun URL (Sizning yangi serveringiz)
+WEBAPP_URL = "https://sdr.yangi-jadid.uz/"
+
+# Ma'lumotlar bazasi parametrlari
+DB_HOST = "localhost"
+DB_USER = "db1"
+DB_PASSWORD = "sardorproject"
+DB_NAME = "db1"

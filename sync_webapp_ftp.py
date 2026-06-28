@@ -33,13 +33,13 @@ def sync_webapp():
         ftp.cwd("/htdocs/webapp")
         
         # Upload products.json
-        local_products = r"c:\Users\User\Desktop\fas foood\webapp\products.json"
+        local_products = "products.json"
         if os.path.exists(local_products):
             with open(local_products, 'rb') as f:
                 ftp.storbinary('STOR products.json', f)
                 
         # Upload images
-        local_images = r"c:\Users\User\Desktop\fas foood\webapp\images"
+        local_images = "images"
         if os.path.exists(local_images):
             print("Rasmlar yuklanmoqda...")
             upload_dir(ftp, local_images, "images")

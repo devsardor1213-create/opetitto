@@ -2,7 +2,7 @@ import asyncio
 import logging
 import json
 from aiogram import Bot, Dispatcher, F
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, WebAppInfo, MenuButtonWebApp, MenuButtonDefault
 from aiogram.enums import ParseMode
@@ -52,12 +52,11 @@ def get_kafe_bino_keyboard(lang='uz'):
         ], resize_keyboard=True
     )
 
-def get_webapp_keyboard(lang='uz'):
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=get_text(lang, "menu"), web_app=WebAppInfo(url=f"{WEBAPP_URL}?lang={lang}"))],
-            [KeyboardButton(text=get_text(lang, "back"))]
-        ], resize_keyboard=True
+def get_webapp_keyboard(lang='uz', user_id=0):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🍔 " + get_text(lang, "menu"), web_app=WebAppInfo(url=f"{WEBAPP_URL}?lang={lang}&user_id={user_id}"))]
+        ]
     )
 
 def get_admin_keyboard():
@@ -67,8 +66,8 @@ def get_admin_keyboard():
             [KeyboardButton(text="📢 Reklama tarqatish"), KeyboardButton(text="👥 Foydalanuvchilar")],
             [KeyboardButton(text="🚚 Kuryerlar ma'lumotlari"), KeyboardButton(text="⚙️ Aloqa sozlamalari")],
             [KeyboardButton(text="👨‍💻 Adminlar"), KeyboardButton(text="🏷 Kategoriyalar")],
-            [KeyboardButton(text="🔄 Balansni nolga tushirish")],
-            [KeyboardButton(text="🔙 Asosiy menyu")]
+            [KeyboardButton(text="📊 Analiz"), KeyboardButton(text="🔄 Balansni nolga tushirish")],
+            [KeyboardButton(text="🔄 Saytni yangilash"), KeyboardButton(text="🔙 Asosiy menyu")]
         ],
         resize_keyboard=True
     )
@@ -181,13 +180,13 @@ async def back_to_main(message: Message, state: FSMContext):
     await message.answer(get_text(lang, "main_menu"), reply_markup=get_start_keyboard(lang))
 
 # --- ORDER FLOW START ---
-@dp.message(F.text.in_([LANGS["uz"]["kafe"], LANGS["ru"]["kafe"], LANGS["en"]["kafe"]]))
+@dp.message(StateFilter(None), F.text.in_([LANGS["uz"]["kafe"], LANGS["ru"]["kafe"], LANGS["en"]["kafe"]]))
 async def kafe_bino(message: Message, state: FSMContext):
     user = await db.get_user(message.from_user.id)
     lang = user.get('lang', 'uz') if user else 'uz'
     await message.answer(get_text(lang, "choose_loc"), reply_markup=get_kafe_bino_keyboard(lang))
 
-@dp.message(F.text.in_([LANGS["uz"]["xona"], LANGS["ru"]["xona"], LANGS["en"]["xona"]]))
+@dp.message(StateFilter(None), F.text.in_([LANGS["uz"]["xona"], LANGS["ru"]["xona"], LANGS["en"]["xona"]]))
 async def choose_xona(message: Message, state: FSMContext):
     user = await db.get_user(message.from_user.id)
     lang = user.get('lang', 'uz') if user else 'uz'
@@ -201,9 +200,10 @@ async def process_room(message: Message, state: FSMContext):
     lang = user.get('lang', 'uz') if user else 'uz'
     if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
-    await message.answer(f"{get_text(lang, 'xona')}: {message.text}.\n\n{get_text(lang, 'menu')}", reply_markup=get_webapp_keyboard(lang))
+    await message.answer("👇", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
+    await message.answer(f"{get_text(lang, 'xona')}: {message.text}.\n\nBuyurtma berish uchun pastdagi <b>🍔 Menyu</b> tugmasini bosing!", reply_markup=get_webapp_keyboard(lang, message.from_user.id))
 
-@dp.message(F.text.in_([LANGS["uz"]["stollar"], LANGS["ru"]["stollar"], LANGS["en"]["stollar"]]))
+@dp.message(StateFilter(None), F.text.in_([LANGS["uz"]["stollar"], LANGS["ru"]["stollar"], LANGS["en"]["stollar"]]))
 async def choose_kafe(message: Message, state: FSMContext):
     user = await db.get_user(message.from_user.id)
     lang = user.get('lang', 'uz') if user else 'uz'
@@ -217,14 +217,16 @@ async def process_table(message: Message, state: FSMContext):
     lang = user.get('lang', 'uz') if user else 'uz'
     if message.text in [LANGS["uz"]["back"], LANGS["ru"]["back"], LANGS["en"]["back"]]: return await back_to_main(message, state)
     await state.update_data(room_table=message.text)
-    await message.answer(f"{get_text(lang, 'stollar')}: {message.text}.\n\n{get_text(lang, 'menu')}", reply_markup=get_webapp_keyboard(lang))
+    await message.answer("👇", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
+    await message.answer(f"{get_text(lang, 'stollar')}: {message.text}.\n\nBuyurtma berish uchun pastdagi <b>🍔 Menyu</b> tugmasini bosing!", reply_markup=get_webapp_keyboard(lang, message.from_user.id))
 
-@dp.message(F.text.in_([LANGS["uz"]["masofaviy"], LANGS["ru"]["masofaviy"], LANGS["en"]["masofaviy"]]))
+@dp.message(StateFilter(None), F.text.in_([LANGS["uz"]["masofaviy"], LANGS["ru"]["masofaviy"], LANGS["en"]["masofaviy"]]))
 async def choose_masofaviy(message: Message, state: FSMContext):
     user = await db.get_user(message.from_user.id)
     lang = user.get('lang', 'uz') if user else 'uz'
     await state.update_data(order_type="Masofaviy", room_table="Yo'q")
-    await message.answer(get_text(lang, "remote_order"), reply_markup=get_webapp_keyboard(lang))
+    await message.answer("👇", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=get_text(lang, "back"))]], resize_keyboard=True))
+    await message.answer(f"{get_text(lang, 'remote_order')}\n\nBuyurtma berish uchun pastdagi <b>🍔 Menyu</b> tugmasini bosing!", reply_markup=get_webapp_keyboard(lang, message.from_user.id))
 
 # --- COURIER REGISTRATION ---
 @dp.message(F.text.in_([LANGS["uz"]["kuryer"], LANGS["ru"]["kuryer"], LANGS["en"]["kuryer"]]))
@@ -371,6 +373,49 @@ async def web_app_data_handler(message: Message, state: FSMContext):
         except Exception as e:
             print(e)
             await message.answer(get_text(lang, "checkout_error"))
+
+@dp.message(F.web_app_data)
+async def web_app_data_handler(message: Message, state: FSMContext):
+    import json
+    try:
+        data = json.loads(message.web_app_data.data)
+        if data.get("action") == "checkout":
+            user_id = message.from_user.id
+            items = data.get("items", [])
+            user = await db.get_user(user_id)
+            lang = user.get('lang', 'uz') if user else 'uz'
+            
+            db_products = await db.get_products()
+            product_dict = {p['id']: p['price'] for p in db_products}
+            
+            total = 0
+            for item in items:
+                real_price = product_dict.get(int(item['id']), item.get('price', 0))
+                item['price'] = real_price
+                total += real_price * int(item['quantity'])
+                
+            await state.update_data(items=items, total=total)
+            state_data = await state.get_data()
+            order_type = state_data.get("order_type")
+            
+            if not order_type:
+                text = get_text(lang, "cart_accepted")
+                await message.answer(text, reply_markup=ReplyKeyboardMarkup(
+                    keyboard=[[KeyboardButton(text=get_text(lang, "kafe")), KeyboardButton(text=get_text(lang, "masofaviy"))]],
+                    resize_keyboard=True
+                ))
+                await state.set_state(OrderFlow.waiting_for_type_after_checkout)
+            else:
+                text = f"🛍 <b>{get_text(lang, 'you_selected')}</b>\n\n"
+                for item in items:
+                    text += f"▪️ {item['name']} x {item['quantity']} = {item['price'] * item['quantity']:,} so'm\n".replace(',', ' ')
+                text += f"\n💰 <b>{get_text(lang, 'total')}:</b> {total:,} so'm\n\n".replace(',', ' ')
+                text += get_text(lang, "phone_prompt")
+                
+                await message.answer(text, reply_markup=get_contact_keyboard(lang))
+                await state.set_state(OrderFlow.waiting_for_phone)
+    except Exception as e:
+        print("WebApp Data Error:", e)
 
 @dp.message(OrderFlow.waiting_for_type_after_checkout, F.text)
 async def process_type_after_checkout(message: Message, state: FSMContext):
@@ -579,6 +624,15 @@ async def admin_password_step(message: Message, state: FSMContext):
         await state.clear()
 
 # --- ADMIN ACTIONS ON ORDERS ---
+@dp.message(F.text == "🔄 Saytni yangilash")
+async def update_website_data(message: Message):
+    if not await is_admin(message.from_user.id): return
+    try:
+        db.export_webapp_products()
+        await message.answer("✅ Sayt ma'lumotlari muvaffaqiyatli yangilandi! Endi barcha o'zgarishlar veb-saytda ko'rinadi.")
+    except Exception as e:
+        await message.answer(f"❌ Xatolik yuz berdi: {e}")
+
 @dp.callback_query(F.data.startswith("acc_"))
 async def accept_order(call: CallbackQuery):
     if not await is_admin(call.from_user.id): return
@@ -898,8 +952,8 @@ async def add_product_image(message: Message, state: FSMContext):
         file_id = message.photo[-1].file_id
         file = await bot.get_file(file_id)
         import os
-        os.makedirs("webapp/images", exist_ok=True)
-        file_path = f"webapp/images/{file_id}.jpg"
+        os.makedirs("images", exist_ok=True)
+        file_path = f"images/{file_id}.jpg"
         await bot.download_file(file.file_path, file_path)
         image_url = f"images/{file_id}.jpg"
     elif message.document:
@@ -912,8 +966,8 @@ async def add_product_image(message: Message, state: FSMContext):
             
         file_id = message.document.file_id
         file = await bot.get_file(file_id)
-        os.makedirs("webapp/images", exist_ok=True)
-        file_path = f"webapp/images/{file_id}{ext}"
+        os.makedirs("images", exist_ok=True)
+        file_path = f"images/{file_id}{ext}"
         await bot.download_file(file.file_path, file_path)
         image_url = f"images/{file_id}{ext}"
     elif message.text and message.text.startswith("http"):
@@ -1014,8 +1068,8 @@ async def admin_edit_product_image(message: Message, state: FSMContext):
         file_id = message.photo[-1].file_id
         file = await bot.get_file(file_id)
         import os
-        os.makedirs("webapp/images", exist_ok=True)
-        file_path = f"webapp/images/{file_id}.jpg"
+        os.makedirs("images", exist_ok=True)
+        file_path = f"images/{file_id}.jpg"
         await bot.download_file(file.file_path, file_path)
         image_url = f"images/{file_id}.jpg"
     elif message.document:
@@ -1028,8 +1082,8 @@ async def admin_edit_product_image(message: Message, state: FSMContext):
             
         file_id = message.document.file_id
         file = await bot.get_file(file_id)
-        os.makedirs("webapp/images", exist_ok=True)
-        file_path = f"webapp/images/{file_id}{ext}"
+        os.makedirs("images", exist_ok=True)
+        file_path = f"images/{file_id}{ext}"
         await bot.download_file(file.file_path, file_path)
         image_url = f"images/{file_id}{ext}"
     elif message.text and message.text.startswith("http"):
@@ -1059,11 +1113,124 @@ async def admin_broadcast_send(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(f"✅ {count} ta foydalanuvchiga yuborildi!", reply_markup=get_admin_keyboard())
 
+@dp.message(F.text == "📊 Analiz")
+async def admin_analiz_start(message: Message):
+    if not await is_admin(message.fromuser.id if hasattr(message, "fromuser") else message.from_user.id): return
+    months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"]
+    keyboard = []
+    row = []
+    for i, m in enumerate(months):
+        row.append(InlineKeyboardButton(text=m, callback_data=f"analiz_m_{i+1}"))
+        if len(row) == 3:
+            keyboard.append(row)
+            row = []
+    if row:
+        keyboard.append(row)
+    await message.answer("📊 Qaysi oyni analiz qilmoqchisiz?\nOyni tanlang:", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
+@dp.callback_query(F.data.startswith("analiz_m_"))
+async def admin_analiz_month(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
+    month = int(call.data.split("_")[2])
+    months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"]
+    month_name = months[month-1]
+    
+    keyboard = [
+        [InlineKeyboardButton(text="1-hafta (1-7 kunlar)", callback_data=f"analiz_p_{month}_w1"), InlineKeyboardButton(text="2-hafta (8-14 kunlar)", callback_data=f"analiz_p_{month}_w2")],
+        [InlineKeyboardButton(text="3-hafta (15-21 kunlar)", callback_data=f"analiz_p_{month}_w3"), InlineKeyboardButton(text="4-hafta (22+ kunlar)", callback_data=f"analiz_p_{month}_w4")],
+        [InlineKeyboardButton(text="1-chi 10 kunlik (1-10)", callback_data=f"analiz_p_{month}_t1")],
+        [InlineKeyboardButton(text="2-chi 10 kunlik (11-20)", callback_data=f"analiz_p_{month}_t2")],
+        [InlineKeyboardButton(text="3-chi 10 kunlik (21+)", callback_data=f"analiz_p_{month}_t3")],
+        [InlineKeyboardButton(text="🔙 Oylarga qaytish", callback_data="analiz_back_m")]
+    ]
+    await call.message.edit_text(f"📊 <b>{month_name}</b> oyi uchun qaysi davrni ko'rmoqchisiz?", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
+@dp.callback_query(F.data == "analiz_back_m")
+async def admin_analiz_back(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
+    months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"]
+    keyboard = []
+    row = []
+    for i, m in enumerate(months):
+        row.append(InlineKeyboardButton(text=m, callback_data=f"analiz_m_{i+1}"))
+        if len(row) == 3:
+            keyboard.append(row)
+            row = []
+    if row:
+        keyboard.append(row)
+    await call.message.edit_text("📊 Qaysi oyni analiz qilmoqchisiz?\nOyni tanlang:", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
+@dp.callback_query(F.data.startswith("analiz_p_"))
+async def admin_analiz_result(call: CallbackQuery):
+    if not await is_admin(call.from_user.id): return
+    parts = call.data.split("_")
+    month = int(parts[2])
+    period = parts[3]
+    
+    months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"]
+    month_name = months[month-1]
+    
+    if period == "w1": p_text, p_func = "1-hafta (1-7 kunlar)", lambda d: 1 <= d <= 7
+    elif period == "w2": p_text, p_func = "2-hafta (8-14 kunlar)", lambda d: 8 <= d <= 14
+    elif period == "w3": p_text, p_func = "3-hafta (15-21 kunlar)", lambda d: 15 <= d <= 21
+    elif period == "w4": p_text, p_func = "4-hafta (22+ kunlar)", lambda d: d >= 22
+    elif period == "t1": p_text, p_func = "1-chi 10 kunlik (1-10)", lambda d: 1 <= d <= 10
+    elif period == "t2": p_text, p_func = "2-chi 10 kunlik (11-20)", lambda d: 11 <= d <= 20
+    elif period == "t3": p_text, p_func = "3-chi 10 kunlik (21+)", lambda d: d >= 21
+    
+    from collections import defaultdict
+    product_counts = defaultdict(int)
+    
+    for o in db.orders:
+        if o.get("status") == "Bekor qilingan": continue
+        date_str = o.get("created_at", "")
+        if not date_str: continue
+        try:
+            d_str, m_str, y_str = date_str.split(" ")[0].split(".")
+            d, m = int(d_str), int(m_str)
+            if m == month and p_func(d):
+                for item in o.get("items", []):
+                    product_counts[item["name"]] += int(item["quantity"])
+        except:
+            continue
+            
+    if not product_counts:
+        return await call.answer("Bunday davr uchun xaridlar topilmadi!", show_alert=True)
+        
+    sorted_products = sorted(product_counts.items(), key=lambda x: x[1], reverse=True)
+    
+    text = f"📊 <b>Analiz: {month_name} / {p_text}</b>\n\n"
+    
+    text += "📈 <b>Eng ko'p sotilgan mahsulotlar:</b>\n"
+    # Show top 5
+    for p_name, p_qty in sorted_products[:5]:
+         text += f"▪️ {p_name} — {p_qty} ta\n"
+         
+    text += "\n📉 <b>Eng kam sotilgan mahsulotlar:</b>\n"
+    # Show bottom 5
+    # If there are less than 10 total products, avoid duplicating them by keeping track
+    shown = set(p[0] for p in sorted_products[:5])
+    bottom_list = []
+    for p_name, p_qty in reversed(sorted_products):
+         if p_name not in shown:
+             bottom_list.append((p_name, p_qty))
+         if len(bottom_list) == 5:
+             break
+             
+    bottom_list.reverse() # to order from somewhat least to very least
+    for p_name, p_qty in bottom_list:
+         text += f"▪️ {p_name} — {p_qty} ta\n"
+         
+    text += f"\n<i>Jami turlar soni: {len(sorted_products)} xil mahsulot sotilgan.</i>"
+    
+    keyboard = [[InlineKeyboardButton(text="🔙 Oylarga qaytish", callback_data="analiz_back_m")]]
+    await call.message.edit_text(text, reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard))
+
 async def start_webapp():
     from aiohttp import web
     import os
     
-    webapp_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'webapp')
+    webapp_dir = os.path.dirname(os.path.abspath(__file__))
     
     async def index_handler(request):
         index_file = os.path.join(webapp_dir, 'index.html')
@@ -1079,7 +1246,77 @@ async def start_webapp():
     app.router.add_get('/health', health_handler)
     # WebApp statik fayllarni serve qilish (index.html, style.css, app.js, images/)
     app.router.add_get('/', index_handler)
-    app.router.add_static('/', webapp_dir)
+    
+    # Faqat ruxsat etilgan fayllarni serve qilish (xavfsizlik uchun)
+    async def static_file_handler(request):
+        filename = request.match_info.get('filename', '')
+        allowed_files = ['app.js', 'style.css', 'products.json']
+        if filename in allowed_files:
+            file_path = os.path.join(webapp_dir, filename)
+            if os.path.exists(file_path):
+                return web.FileResponse(file_path)
+        return web.Response(status=404)
+        
+    app.router.add_get('/{filename}', static_file_handler)
+    
+    # Rasmlar papkasini serve qilish
+    images_dir = os.path.join(webapp_dir, 'images')
+    os.makedirs(images_dir, exist_ok=True)
+    app.router.add_static('/images', images_dir)
+    
+    async def api_checkout_handler(request):
+        try:
+            data = await request.json()
+            user_id = int(data.get('user_id', 0))
+            items = data.get('items', [])
+            if not items or not user_id:
+                return web.json_response({"status": "error", "message": "Bo'sh savat yoki user topilmadi"})
+
+            user = await db.get_user(user_id)
+            lang = user.get('lang', 'uz') if user else 'uz'
+            
+            db_products = await db.get_products()
+            product_dict = {p['id']: p['price'] for p in db_products}
+            
+            total = 0
+            for item in items:
+                real_price = product_dict.get(int(item['id']), item.get('price', 0))
+                item['price'] = real_price
+                total += real_price * int(item['quantity'])
+                
+            from aiogram.fsm.storage.base import StorageKey
+            state = FSMContext(
+                storage=dp.storage,
+                key=StorageKey(bot_id=bot.id, chat_id=user_id, user_id=user_id)
+            )
+            
+            await state.update_data(items=items, total=total)
+            state_data = await state.get_data()
+            order_type = state_data.get("order_type")
+            
+            if not order_type:
+                text = get_text(lang, "cart_accepted")
+                await bot.send_message(user_id, text, reply_markup=ReplyKeyboardMarkup(
+                    keyboard=[[KeyboardButton(text=get_text(lang, "kafe")), KeyboardButton(text=get_text(lang, "masofaviy"))]],
+                    resize_keyboard=True
+                ))
+                await state.set_state(OrderFlow.waiting_for_type_after_checkout)
+            else:
+                text = f"🛍 <b>{get_text(lang, 'you_selected')}</b>\n\n"
+                for item in items:
+                    text += f"▪️ {item['name']} x {item['quantity']} = {item['price'] * item['quantity']:,} so'm\n".replace(',', ' ')
+                text += f"\n💰 <b>{get_text(lang, 'total')}:</b> {total:,} so'm\n\n".replace(',', ' ')
+                text += get_text(lang, "phone_prompt")
+                
+                await bot.send_message(user_id, text, reply_markup=get_contact_keyboard(lang))
+                await state.set_state(OrderFlow.waiting_for_phone)
+                
+            return web.json_response({"status": "ok"})
+        except Exception as e:
+            print("API Checkout Error:", e)
+            return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+    app.router.add_post('/api/checkout', api_checkout_handler)
     
     runner = web.AppRunner(app)
     await runner.setup()

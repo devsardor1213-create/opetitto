@@ -1,12 +1,241 @@
 {
-    "users": {},
-    "products": [],
-    "orders": [],
+    "users": {
+        "8135353129": {
+            "id": 1,
+            "telegram_id": 8135353129,
+            "fullname": "Sobirjonov",
+            "phone": null,
+            "lang": "uz",
+            "registered_at": "2026-06-26 12:42"
+        },
+        "7752032178": {
+            "id": 2,
+            "telegram_id": 7752032178,
+            "fullname": "개발자👨🏻‍💻",
+            "phone": null,
+            "lang": "uz",
+            "registered_at": "2026-06-26 12:43"
+        },
+        "7032024055": {
+            "id": 3,
+            "telegram_id": 7032024055,
+            "fullname": "Coderixa",
+            "phone": null,
+            "lang": "en",
+            "registered_at": "2026-06-26 12:44"
+        }
+    },
+    "products": [
+        {
+            "id": 4,
+            "name": "oshj",
+            "category": "osh",
+            "description": "os",
+            "price": 4545,
+            "is_active": 1,
+            "emoji": "🍽",
+            "image": "images/AgACAgIAAxkBAAN1aj-nt7oIGv7o7bkHRnUhmakuxoYAAooZaxsxFQABSiIBMU1naLnIAQADAgADeAADPAQ.jpg"
+        },
+        {
+            "id": 5,
+            "name": "nn",
+            "category": "osh",
+            "description": "non",
+            "price": 40,
+            "is_active": 1,
+            "emoji": "🍽",
+            "image": "images/AgACAgIAAxkBAAIIeGpAqqtDe7oAAWOcuGcCbDYqpUJO7wACfxtrG16mAUovC7kV8NkwUAEAAwIAA3gAAzwE.jpg"
+        }
+    ],
+    "orders": [
+        {
+            "id": 1,
+            "user_id": 7752032178,
+            "total_price": 300,
+            "location": "40.66629,72.256562",
+            "phone": "998940898119",
+            "status": "Qabul qilindi va tayyorlanmoqda",
+            "items": [
+                {
+                    "id": 1,
+                    "name": "osh",
+                    "price": 100,
+                    "quantity": 3
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Нет",
+            "courier_id": null,
+            "created_at": "26.06.2026 12:44"
+        },
+        {
+            "id": 2,
+            "user_id": 7752032178,
+            "total_price": 400,
+            "location": "40.666056,72.25638",
+            "phone": "998940898119",
+            "status": "Yangi",
+            "items": [
+                {
+                    "id": 1,
+                    "name": "osh",
+                    "price": 100,
+                    "quantity": 4
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Нет",
+            "courier_id": null,
+            "created_at": "27.06.2026 15:23"
+        },
+        {
+            "id": 3,
+            "user_id": 7752032178,
+            "total_price": 400,
+            "location": "Kiritilmagan",
+            "phone": "+998940898119",
+            "status": "Qabul qilindi va tayyorlanmoqda",
+            "items": [
+                {
+                    "id": 1,
+                    "name": "osh",
+                    "price": 100,
+                    "quantity": 4
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Yo'q",
+            "courier_id": null,
+            "created_at": "27.06.2026 15:31"
+        },
+        {
+            "id": 4,
+            "user_id": 7752032178,
+            "total_price": 700,
+            "location": "Kiritilmagan",
+            "phone": "+998940898119",
+            "status": "Yangi",
+            "items": [
+                {
+                    "id": 1,
+                    "name": "osh",
+                    "price": 100,
+                    "quantity": 7
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Yo'q",
+            "courier_id": null,
+            "created_at": "27.06.2026 15:35"
+        },
+        {
+            "id": 5,
+            "user_id": 7752032178,
+            "total_price": 4545,
+            "location": "40.666104,72.256578",
+            "phone": "998940898119",
+            "status": "Qabul qilindi va tayyorlanmoqda",
+            "items": [
+                {
+                    "id": 4,
+                    "name": "oshj",
+                    "price": 4545,
+                    "quantity": 1
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Ug",
+            "courier_id": null,
+            "created_at": "27.06.2026 16:16"
+        },
+        {
+            "id": 6,
+            "user_id": 7752032178,
+            "total_price": 13635,
+            "location": "Kiritilmagan",
+            "phone": "+998940898119",
+            "status": "Qabul qilindi va tayyorlanmoqda",
+            "items": [
+                {
+                    "id": 4,
+                    "name": "oshj",
+                    "price": 4545,
+                    "quantity": 3
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Yo'q",
+            "courier_id": null,
+            "created_at": "27.06.2026 18:22"
+        },
+        {
+            "id": 7,
+            "user_id": 7752032178,
+            "total_price": 27270,
+            "location": "Kiritilmagan",
+            "phone": "+998940898119",
+            "status": "Qabul qilindi va tayyorlanmoqda",
+            "items": [
+                {
+                    "id": 4,
+                    "name": "oshj",
+                    "price": 4545,
+                    "quantity": 6
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Yo'q",
+            "courier_id": null,
+            "created_at": "28.06.2026 10:00"
+        },
+        {
+            "id": 8,
+            "user_id": 7752032178,
+            "total_price": 18380,
+            "location": "40.666064,72.256314",
+            "phone": "998940898119",
+            "status": "Yangi",
+            "items": [
+                {
+                    "id": 4,
+                    "name": "oshj",
+                    "price": 4545,
+                    "quantity": 4
+                },
+                {
+                    "id": 5,
+                    "name": "nn",
+                    "price": 40,
+                    "quantity": 5
+                }
+            ],
+            "order_type": "Masofaviy",
+            "room_table": "Yo'q",
+            "comment": "Yo'q",
+            "courier_id": null,
+            "created_at": "28.06.2026 10:02"
+        }
+    ],
     "carts": {},
     "admins": [
         8135353129
     ],
-    "couriers": [],
+    "couriers": [
+        {
+            "id": 1,
+            "telegram_id": 7032024055,
+            "fullname": "sardor",
+            "phone": "+998934152360",
+            "registered_at": "2026-06-26 12:45"
+        }
+    ],
     "admin_contact": {
         "name": "Fast Food Admin",
         "phone": "+998 90 123 45 67",
@@ -17,7 +246,8 @@
         "🌯 Lavashlar",
         "🥤 Ichimliklar",
         "🍟 Sneklar",
-        "🍰 Shirinliklar"
+        "🍰 Shirinliklar",
+        "osh"
     ],
     "admin_accounts": [
         {
